@@ -80,6 +80,14 @@ class GoBoardUtil(object):
             Use in UI only. For playing, use generate_move_with_filter
             which is more efficient
         """
+        atari_capture_moves = GoBoardUtil.generate_atari_capture_moves(board)
+        if len(atari_capture_moves) > 0:
+            return atari_capture_moves, "AtariCapture"
+
+        atari_defense_moves = GoBoardUtil.generate_atari_defense_moves(board)
+        if len(atari_defense_moves) > 0:
+            return atari_defense_moves, "AtariDefense"
+
         pattern_moves = GoBoardUtil.generate_pattern_moves(board)
         pattern_moves = GoBoardUtil.filter_moves(board, pattern_moves, check_selfatari)
         if len(pattern_moves) > 0:
@@ -327,4 +335,33 @@ class GoBoardUtil(object):
             return 'pass'
         row, col = divmod(point, ns)
         return row,col
+
+    ### Assignment 3 -Atari Capture
+    #Todo
+    @staticmethod
+    def generate_atari_capture_moves(board):
+        color = board.current_player
+        pattern_checking_set = board.last_moves_empty_neighbors()
+        moves = []
+        for p in pattern_checking_set:
+            if (board.neighborhood_33(p) in pat3set):
+                assert p not in moves
+                assert board.board[p] == EMPTY
+                moves.append(p)
+        return moves
+
+    ### Assignment 3 -Atari Defense
+    #Todo
+    @staticmethod
+    def generate_atari_defense_moves(board):
+        color = board.current_player
+        pattern_checking_set = board.last_moves_empty_neighbors()
+        moves = []
+        for p in pattern_checking_set:
+            if (board.neighborhood_33(p) in pat3set):
+                assert p not in moves
+                assert board.board[p] == EMPTY
+                moves.append(p)
+        return moves
+
 
