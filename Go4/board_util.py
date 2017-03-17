@@ -80,6 +80,15 @@ class GoBoardUtil(object):
             Use in UI only. For playing, use generate_move_with_filter
             which is more efficient
         """
+        
+        if board.last_move != None:
+            ataricapture = GoBoardUtil.atari_capture(board, board.last_move, GoBoardUtil.opponent(board.current_player))
+            ataricapture = GoBoardUtil.filter_moves(board, ataricapture, check_selfatari)
+            if len(ataricapture) > 0:
+                return ataricapture, "AtariCapture"
+            
+        
+        
         pattern_moves = GoBoardUtil.generate_pattern_moves(board)
         pattern_moves = GoBoardUtil.filter_moves(board, pattern_moves, check_selfatari)
         if len(pattern_moves) > 0:
@@ -327,4 +336,17 @@ class GoBoardUtil(object):
             return 'pass'
         row, col = divmod(point, ns)
         return row,col
-
+        
+        
+    @staticmethod
+    def atari_capture(board, last_move, color):
+        if board._liberty(last_move, color) == 1:
+            fboard = board._flood_fill(board.last_move)
+            inds = list(*np.where(fboard == FLOODFILL))
+            for f in inds:
+                f_neighbors = board._neighbors(f)
+                for n in f_neighbors:
+                    if fboard[n]==EMPTY:
+                        return [int(n)]
+        else:
+            return []
