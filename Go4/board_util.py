@@ -80,13 +80,16 @@ class GoBoardUtil(object):
             Use in UI only. For playing, use generate_move_with_filter
             which is more efficient
         """
-        atari_capture_moves = GoBoardUtil.generate_atari_capture_moves(board)
-        if len(atari_capture_moves) > 0:
-            return atari_capture_moves, "AtariCapture"
+        if board.last_move != None:
+            atari_capture_moves = GoBoardUtil.generate_atari_capture_moves(board)
+            atari_capture_moves = GoBoardUtil.filter_moves(board, atari_capture_moves, check_selfatari)
+            if len(atari_capture_moves) > 0:
+                return atari_capture_moves, "AtariCapture"
 
-        atari_defense_moves = GoBoardUtil.generate_atari_defense_moves(board)
-        if len(atari_defense_moves) > 0:
-            return atari_defense_moves, "AtariDefense"
+            atari_defense_moves = GoBoardUtil.generate_atari_defense_moves(board)
+            atari_defense_moves = GoBoardUtil.filter_moves(board, atari_defense_moves, check_selfatari)
+            if len(atari_defense_moves) > 0:
+                return atari_defense_moves, "AtariDefense"
 
         pattern_moves = GoBoardUtil.generate_pattern_moves(board)
         pattern_moves = GoBoardUtil.filter_moves(board, pattern_moves, check_selfatari)
@@ -336,32 +339,61 @@ class GoBoardUtil(object):
         row, col = divmod(point, ns)
         return row,col
 
-    ### Assignment 3 -Atari Capture
-    #Todo
+    ### Assignment 3 - Atari Capture
     @staticmethod
     def generate_atari_capture_moves(board):
-        color = board.current_player
-        pattern_checking_set = board.last_moves_empty_neighbors()
         moves = []
-        for p in pattern_checking_set:
-            if (board.neighborhood_33(p) in pat3set):
-                assert p not in moves
-                assert board.board[p] == EMPTY
-                moves.append(p)
+        move = GoBoardUtil.find_last_liberty(board, board.last_move)
+        if move:
+            moves.append(move)
         return moves
 
-    ### Assignment 3 -Atari Defense
-    #Todo
+    ### Assignment 3 - Atari Defense
     @staticmethod
     def generate_atari_defense_moves(board):
-        color = board.current_player
-        pattern_checking_set = board.last_moves_empty_neighbors()
         moves = []
-        for p in pattern_checking_set:
-            if (board.neighborhood_33(p) in pat3set):
-                assert p not in moves
-                assert board.board[p] == EMPTY
-                moves.append(p)
-        return moves
+        for nb in board._neighbors(board.last_move):
+            color = board.board[nb]
+            if color == board.current_player:
+                if board._liberty(nb, color) != 1:
+                    continue
+                # Run Away
+                move = GoBoardUtil.find_last_liberty(board, nb)
+                if move:
+                    moves.append(move)
+                # Capture
+                adjacent_opponent = GoBoardUtil.find_adjacent_opponent(board, nb)
+                adjacent_opponent.remove(board.last_move)
+                for point in adjacent_opponent:
+                    move = GoBoardUtil.find_last_liberty(board, point)
+                    if move:
+                        moves.append(move)
+        return list(set(moves))
 
+    ### Assignment 3 - Find the last liberty point
+    @staticmethod
+    def find_last_liberty(board, point):
+        if board._liberty(point, board._points_color(point)) == 1:
+            fboard = board._flood_fill(point)
+            inds = list(*np.where(fboard == FLOODFILL))
+            for f in inds:
+                f_neighbors = board._neighbors(f)
+                for n in f_neighbors:
+                    if fboard[n]==EMPTY:
+                        return n
+        else:
+            return None
 
+    ### Assignment 3 - Find the adjacent opponent points of the input point
+    @staticmethod
+    def find_adjacent_opponent(board, point):
+        adjacent_opponent = []
+        opponent_color = GoBoardUtil.opponent(board.board[point])
+        fboard = board._flood_fill(point)
+        inds = list(*np.where(fboard == FLOODFILL))
+        for f in inds:
+            f_neighbors = board._neighbors(f)
+            for n in f_neighbors:
+                if fboard[n] == opponent_color:
+                    adjacent_opponent.append(n)
+        return adjacent_opponent
