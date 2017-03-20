@@ -70,13 +70,13 @@ class Go4Player(object):
         
     def get_move(self, board, toplay):
         cboard = board.copy()
-        #emptyPoints = board.get_empty_points()
+        # emptyPoints = board.get_empty_points()
         moves = []
         ### Assignment 3 - genmove
         policy_moves, type_of_move = GoBoardUtil.generate_all_policy_moves(board,
                                                 self.pattern,
                                                 self.selfatari)
-        #for p in emptyPoints:
+        # for p in emptyPoints:
         for p in policy_moves:
             if not GoBoardUtil.filleye_filter(board, p, toplay):
                 moves.append(p)

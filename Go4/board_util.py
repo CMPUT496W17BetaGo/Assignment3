@@ -175,10 +175,24 @@ class GoBoardUtil(object):
             use_pattern: Use pattern policy?
         """
         move = None
+
+        ### Assignment 3
+        if board.last_move != None:
+            # Atari Capture
+            moves = GoBoardUtil.generate_atari_capture_moves(board)
+            move = GoBoardUtil.filter_moves_and_generate(board, moves, check_selfatari)
+            if move:
+                return move
+
+            # Atari Defense
+            moves = GoBoardUtil.generate_atari_defense_moves(board)
+            move = GoBoardUtil.filter_moves_and_generate(board, moves, check_selfatari)
+            if move:
+                return move
+
         if use_pattern:
             moves = GoBoardUtil.generate_pattern_moves(board)
-            move = GoBoardUtil.filter_moves_and_generate(board, moves, 
-                                                         check_selfatari)
+            move = GoBoardUtil.filter_moves_and_generate(board, moves, check_selfatari)
         if move == None:
             move = GoBoardUtil.generate_random_move(board)
         return move 
