@@ -612,3 +612,34 @@ class GoBoard(object):
     def _point_to_coord(self,point):
         return GoBoardUtil.point_to_coord(point, self.NS)
 
+    ### Assignment 3
+    def _liberty_points(self, point, color):
+        """
+        ---------
+        Return
+        ---------
+        liberty: int
+            Number of liberty that the given point has
+        points:
+            Points of liberty
+        """
+
+        group_points = [point]
+        liberty=0
+        met_points=[point]
+        liberty_points=[]
+        while group_points:
+            p=group_points.pop()
+            met_points.append(p)
+            neighbors = self._neighbors(p)
+            for n in neighbors:
+                if n not in met_points:
+                    if self.board[n]==BORDER:
+                        continue
+                    if self.board[n]==color:
+                        group_points.append(n)
+                    elif self.board[n]==EMPTY:
+                        liberty+=1
+                        liberty_points.append(n)
+                    met_points.append(n)
+        return liberty, liberty_points
