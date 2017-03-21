@@ -12,7 +12,7 @@ echo Match with $NUGAMES games on board size $BOARDSIZE. Storing results in $RES
 mkdir -p $RESULTDIR
 $TWOGTP -black "$GO4" -white "$GO4AC" \
 -auto  -komi 6.5 -size $BOARDSIZE -games $NUGAMES \
--sgffile $RESULTDIR/game -threads 1000
+-sgffile $RESULTDIR/game -threads 8
 
 $TWOGTP -analyze $RESULTDIR/game.dat -force
 }
