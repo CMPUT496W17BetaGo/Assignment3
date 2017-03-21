@@ -40,7 +40,7 @@ class Go4Player(object):
 
     version = 0.3
     name = "Go4"
-    def __init__(self,num_simulation=50,size=7,limit=100):
+    def __init__(self,num_simulation=50,size=5,limit=100):
         """
         self.selfatari & self.pattern gets created in the gtp_connection, 
         when instance of GtpConnection is created
