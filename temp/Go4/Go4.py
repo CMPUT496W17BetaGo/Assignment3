@@ -40,7 +40,7 @@ class Go4Player(object):
 
     version = 0.3
     name = "Go4"
-    def __init__(self,num_simulation=50,size=7,limit=100):
+    def __init__(self,num_simulation=50,size=5,limit=100):
         """
         self.selfatari & self.pattern gets created in the gtp_connection, 
         when instance of GtpConnection is created
@@ -70,14 +70,14 @@ class Go4Player(object):
         
     def get_move(self, board, toplay):
         cboard = board.copy()
-        # emptyPoints = board.get_empty_points()
+        emptyPoints = board.get_empty_points()
         moves = []
         ### Assignment 3 - genmove
-        policy_moves, type_of_move = GoBoardUtil.generate_all_policy_moves(board,
-                                                self.pattern,
-                                                self.selfatari)
-        # for p in emptyPoints:
-        for p in policy_moves:
+        #policy_moves, type_of_move = GoBoardUtil.generate_all_policy_moves(board,
+         #                                       self.pattern,
+          #                                      self.selfatari)
+        for p in emptyPoints:
+        #for p in policy_moves:
             if not GoBoardUtil.filleye_filter(board, p, toplay):
                 moves.append(p)
         if not moves: # pass move only, no need to simulate
