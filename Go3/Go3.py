@@ -38,7 +38,7 @@ class Go3Player(object):
 
     version = 0.22
     name = "Go3"
-    def __init__(self,num_simulation=10,size=7,limit=100):
+    def __init__(self,num_simulation=50,size=5,limit=100):
         self.num_simulation = num_simulation
         self.limit = limit
     
